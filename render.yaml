@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: legends-ysm-api
+    runtime: node
+    plan: free
+    buildCommand: npm install --ignore-scripts
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: ENABLE_DOWNLOADS
+        value: "false"
