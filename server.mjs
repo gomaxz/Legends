@@ -1,4 +1,5 @@
 import http from 'node:http';
+import { createBridge } from './bridge.mjs';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -80,10 +81,12 @@ async function signObject(assetPath) {
 }
 
 export function createApp() {
+  const bridge = createBridge({ authenticate: verifySupabaseUser });
   return http.createServer(async (req, res) => {
     try {
       const parsed = new URL(req.url, 'http://localhost');
       const pathname = parsed.pathname;
+      if (await bridge.handle(req, res, pathname)) return;
       if (req.method !== 'GET') return respond(res, 405, { error: 'METHOD_NOT_ALLOWED' });
 
       if (pathname === '/health') return respond(res, 200, { ok: true, service: 'legends-ysm-api', version: '0.1.0' });
